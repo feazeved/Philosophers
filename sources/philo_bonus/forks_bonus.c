@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   forks_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: feazeved <feazeved@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: adeimlin <adeimlin@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/11 17:55:08 by feazeved          #+#    #+#             */
-/*   Updated: 2026/03/11 18:30:41 by feazeved         ###   ########.fr       */
+/*   Created: 2025/12/05 15:35:09 by adeimlin          #+#    #+#             */
+/*   Updated: 2025/12/05 16:12:49 by adeimlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <pthread.h>
-#include <string.h>
+#include <semaphore.h>
 
-typedef struct	s_table
+void	take_fork(void *sem)
 {
-	int	number_philos;
-}	t_table;
+	sem_wait(sem);
+}
 
-int	main(int argc, char **argv)
+void	drop_forks(void *sem1, void *sem2)
 {
-	t_table	table;
-
-	memset(&table, 0, sizeof(t_table));
-	if (parse(&table, argc, argv))
-		return (1);
-	return (0);
+	sem_post(sem1);
+	sem_post(sem2);
 }
