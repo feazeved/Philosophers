@@ -1,5 +1,7 @@
 This project has been created as part of the 42 curriculum by Felipe Suassuna.
 
+> ⚠️ Note: This project was developed iteratively but consolidated into a single commit at submission. The commit history does not reflect the full development process.
+
 This project explores the "Dining Philosophers" problem to master the complexities of concurrency, multi-threading, and inter-process communication. The goal was to manage shared resources among up to 200 concurrent philosophers without ever encountering a deadlock or resource starvation. 
 
 Hybrid Synchronization: Utilized mutexes for thread synchronization and semaphores for IPC to manage shared resources. 
