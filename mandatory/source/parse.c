@@ -14,17 +14,6 @@
 #include <unistd.h>
 #include "philo.h"
 
-// Function that will print the error marked by stt_philo_strtol
-static void	stt_print_error(int error)
-{
-	if (error == -1)
-		write(STDERR_FILENO, FT_INVALID_ARG, 47);
-	else if (error == -2)
-		write(STDERR_FILENO, FT_EMPTY_ARG, 29);
-	else if (error == -3)
-		write(STDERR_FILENO, FT_OVERFLOW, 43);
-}
-
 // Function that will translate the args into int32_t for t_table
 //
 // Error value: -1) Invalid argument,  -2) Empty arg  -3) int overflow
@@ -64,7 +53,7 @@ int	parse_args(t_table *table, int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 	{
-		write(STDERR_FILENO, FT_USAGE, 44);
+		write(STDERR_FILENO, FT_USAGE, 56);
 		return (1);
 	}
 	error = 0;
@@ -77,7 +66,7 @@ int	parse_args(t_table *table, int argc, char **argv)
 		table->number_meals = stt_philo_strtol(argv[5], &error);
 	if (error)
 	{
-		stt_print_error(error);
+		write(STDERR_FILENO, FT_INVALID_ARG, 47);
 		return (1);
 	}
 	return (0);

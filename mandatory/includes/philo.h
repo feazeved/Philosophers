@@ -17,11 +17,7 @@
 
 # define FT_USAGE "Error: Usage: Check correct usage on README\n"
 
-# define FT_INVALID_ARG "Error: An argument is negative or non numeric.\n"
-
-# define FT_EMPTY_ARG "Error: An argument is empty.\n"
-
-# define FT_OVERFLOW "Error: An argument is bigger than int max.\n"
+# define FT_INVALID_ARG "Error: An argument is invalid.\n"
 
 # include <stdint.h>
 # include <pthread.h>
@@ -57,5 +53,10 @@ typedef struct	s_table
 int		parse_args(t_table *table, int argc, char **argv);
 int64_t	get_time_ms(void);
 int		init_table(t_table *table);
+void    *monitor_routine(void *arg);
+void	*philo_routine(void *arg);
+void	precise_sleep(int64_t duration_ms, t_table *table);
+int8_t	is_dead(t_table *table);
+void	print_state(t_philo *philo, const char *state);
 
 #endif

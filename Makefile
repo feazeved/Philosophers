@@ -12,7 +12,9 @@ OBJ_DIR			=	$(MANDATORY_DIR)/objects
 SRCS			=	main.c \
 					init.c \
 					parse.c \
-					utils.c
+					utils.c \
+					routine.c \
+					monitor.c
 OBJS			=	$(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
 
 BONUS_DIR		=	bonus

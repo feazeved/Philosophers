@@ -12,6 +12,8 @@
 
 #include <sys/time.h>
 #include <stdint.h>
+#include <unistd.h>
+#include <stdio.h>
 #include "philo.h"
 
 int64_t	get_time_ms(void)
@@ -21,6 +23,17 @@ int64_t	get_time_ms(void)
 	gettimeofday(&tv, 0);
 	return (((int64_t)tv.tv_sec * 1000) + ((int64_t)tv.tv_usec / 1000));
 }
+
+int8_t	is_dead(t_table *table)
+{
+	int8_t	dead;
+
+	pthread_mutex_lock(&table->death_mutex);
+	dead = table->dead;
+	pthread_mutex_unlock(&table->death_mutex);
+	return (dead);
+}
+
 void	precise_sleep(int64_t duration_ms, t_table *table)
 {
 	int64_t	start;
@@ -34,16 +47,6 @@ void	precise_sleep(int64_t duration_ms, t_table *table)
 	}
 }
 
-int8_t	is_dead(t_table *table)
-{
-	int8_t	dead;
-
-	pthread_mutex_lock(&table->death_mutex);
-	dead = table->dead;
-	pthread_mutex_unlock(&table->death_mutex);
-	return (dead);
-}
-
 void	print_state(t_philo *philo, const char *state)
 {
 	int64_t	time_ms;
@@ -51,6 +54,6 @@ void	print_state(t_philo *philo, const char *state)
 	pthread_mutex_lock(&philo->table->print_mutex);
 	time_ms = get_time_ms() - philo->table->start_time;
 	if (!philo->table->dead)
-		printf("%lld %d %s\n", time_ms, philo->id, state);
+		printf("%lld %d %s\n", (long long)time_ms, philo->id, state);
 	pthread_mutex_unlock(&philo->table->print_mutex);
 }
