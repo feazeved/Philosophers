@@ -1,4 +1,5 @@
 NAME			=	philo
+BONUS_NAME		=	philo_bonus
 
 CC				=	cc
 CFLAGS			=	-Wall -Wextra -Werror
@@ -21,8 +22,13 @@ BONUS_DIR		=	bonus
 BONUS_SRC_DIR	=	$(BONUS_DIR)/source
 BONUS_INC_DIR	=	$(BONUS_DIR)/includes
 BONUS_OBJ_DIR	=	$(BONUS_DIR)/objects
-BONUS_NAME		=	philo_bonus
-BONUS_SRCS		=	$(notdir $(wildcard $(BONUS_SRC_DIR)/*.c))
+
+BONUS_SRCS		=	main_bonus.c \
+					init_bonus.c \
+					parse_bonus.c \
+					utils_bonus.c \
+					routine_bonus.c \
+					monitor_bonus.c
 BONUS_OBJS		=	$(addprefix $(BONUS_OBJ_DIR)/, $(BONUS_SRCS:.c=.o))
 
 all:	$(NAME)
@@ -36,8 +42,6 @@ $(OBJ_DIR)/%.o:	$(SRC_DIR)/%.c | $(OBJ_DIR)
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
-ifneq ($(BONUS_SRCS),)
-
 bonus:	$(BONUS_NAME)
 
 $(BONUS_NAME):	$(BONUS_OBJS)
@@ -48,12 +52,6 @@ $(BONUS_OBJ_DIR)/%.o:	$(BONUS_SRC_DIR)/%.c | $(BONUS_OBJ_DIR)
 
 $(BONUS_OBJ_DIR):
 	mkdir -p $(BONUS_OBJ_DIR)
-
-else
-
-bonus:	all
-
-endif
 
 clean:
 	rm -rf $(OBJ_DIR) $(BONUS_OBJ_DIR)
