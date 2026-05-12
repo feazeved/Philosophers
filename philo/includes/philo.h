@@ -15,7 +15,7 @@
 
 # define MAX_PHILOS 200
 
-# define FT_USAGE "Error: Usage: Check correct usage on README\n"
+# define FT_USAGE "Error: Invalid: Check correct usage on README.\n"
 
 # define FT_INVALID_ARG "Error: An argument is invalid.\n"
 
@@ -35,7 +35,7 @@ typedef struct s_philo
 	t_table			*table;
 }	t_philo;
 
-typedef struct	s_table
+typedef struct s_table
 {
 	int32_t			number_philos;
 	int32_t			eat_time;
@@ -53,10 +53,11 @@ typedef struct	s_table
 int		parse_args(t_table *table, int argc, char **argv);
 int64_t	get_time_ms(void);
 int		init_table(t_table *table);
-void    *monitor_routine(void *arg);
+void	*monitor_routine(void *arg);
 void	*philo_routine(void *arg);
 void	precise_sleep(int64_t duration_ms, t_table *table);
 int8_t	is_dead(t_table *table);
 void	print_state(t_philo *philo, const char *state);
+void	cleanup(t_table *table, int32_t forks_created);
 
 #endif

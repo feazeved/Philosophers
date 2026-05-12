@@ -14,7 +14,7 @@
 # define PHILO_BONUS_H
 
 # define MAX_PHILOS 200
-# define FT_USAGE "Error: Usage: Check correct usage on README.\n"
+# define FT_USAGE "Error: Invalid: Check correct usage on README.\n"
 # define FT_INVALID_ARG "Error: An argument is invalid.\n"
 
 # include <stdint.h>
@@ -26,9 +26,9 @@
 # include <sys/types.h>
 # include <signal.h>
 
-typedef struct	s_table	t_table;
+typedef struct s_table	t_table;
 
-typedef struct	s_philo
+typedef struct s_philo
 {
 	int32_t		id;
 	int32_t		meals_eaten;
@@ -37,7 +37,7 @@ typedef struct	s_philo
 	t_table		*table;
 }	t_philo;
 
-typedef struct	s_table
+typedef struct s_table
 {
 	int32_t	number_philos;
 	int32_t	eat_time;
@@ -52,10 +52,9 @@ typedef struct	s_table
 	sem_t	*print_sem;
 	sem_t	*death_sem;
 	sem_t	*meal_sem;
-	sem_t	*full_sem;
 }	t_table;
 
-void    *monitor_routine(void *arg);
+void	*monitor_routine(void *arg);
 void	*philo_process(t_philo *philo);
 int		parse_args(t_table *table, int argc, char **argv);
 int		init_table(t_table *table);

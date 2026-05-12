@@ -56,6 +56,7 @@ static void	*stt_single_philo(t_philo *philo)
 	pthread_mutex_unlock(philo->left_fork);
 	return (NULL);
 }
+
 void	*philo_routine(void *arg)
 {
 	t_philo	*philo;
@@ -72,6 +73,8 @@ void	*philo_routine(void *arg)
 			return (NULL);
 		stt_eat(philo);
 		stt_put_forks(philo);
+		if (is_dead(philo->table))
+			return (NULL);
 		print_state(philo, "is sleeping");
 		precise_sleep(philo->table->sleep_time, philo->table);
 	}

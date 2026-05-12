@@ -53,7 +53,7 @@ int	parse_args(t_table *table, int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 	{
-		write(STDERR_FILENO, FT_USAGE, 56);
+		write(STDERR_FILENO, FT_USAGE, 47);
 		return (1);
 	}
 	error = 0;
@@ -66,7 +66,7 @@ int	parse_args(t_table *table, int argc, char **argv)
 		table->number_meals = stt_philo_strtol(argv[5], &error);
 	if (error)
 	{
-		write(STDERR_FILENO, FT_INVALID_ARG, 47);
+		write(STDERR_FILENO, FT_INVALID_ARG, 31);
 		return (1);
 	}
 	return (0);

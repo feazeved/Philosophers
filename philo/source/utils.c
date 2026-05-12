@@ -57,3 +57,21 @@ void	print_state(t_philo *philo, const char *state)
 		printf("%lld %d %s\n", (long long)time_ms, philo->id, state);
 	pthread_mutex_unlock(&philo->table->print_mutex);
 }
+
+void	cleanup(t_table *table, int32_t forks_created)
+{
+	int32_t	i;
+	int32_t	max_iterations;
+
+	i = 0;
+	max_iterations = table->number_philos;
+	if (forks_created)
+		max_iterations = forks_created;
+	while (i < max_iterations)
+	{
+		pthread_mutex_destroy(&table->forks[i]);
+		i++;
+	}
+	pthread_mutex_destroy(&table->death_mutex);
+	pthread_mutex_destroy(&table->print_mutex);
+}

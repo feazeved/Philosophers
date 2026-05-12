@@ -1,47 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   init_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: feazeved <feazeved@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 17:55:08 by feazeved          #+#    #+#             */
-/*   Updated: 2026/03/11 18:30:41 by feazeved         ###   ########.fr       */
+/*   Updated: 2026/04/27 18:18:29 by feazeved         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
-// Return value: 0) Success  1) Error
-static int	stt_init_forks(t_table *table)
+static int	stt_init_semaphores(t_table *table)
 {
-	int32_t	i;
-
-	i = 0;
-	while (i < table->number_philos)
+	table->forks = SEM_FAILED;
+	table->print_sem = SEM_FAILED;
+	table->death_sem = SEM_FAILED;
+	table->meal_sem = SEM_FAILED;
+	sem_unlink("/philo_forks");
+	sem_unlink("/philo_print");
+	sem_unlink("/philo_death");
+	sem_unlink("/philo_meal");
+	table->forks = sem_open("/philo_forks", O_CREAT,
+			0644, table->number_philos);
+	table->print_sem = sem_open("/philo_print", O_CREAT, 0644, 1);
+	table->death_sem = sem_open("/philo_death", O_CREAT, 0644, 0);
+	table->meal_sem = sem_open("/philo_meal", O_CREAT, 0644, 1);
+	if (table->forks == SEM_FAILED || table->print_sem == SEM_FAILED
+		|| table->death_sem == SEM_FAILED || table->meal_sem == SEM_FAILED)
 	{
-		if (pthread_mutex_init(&table->forks[i], NULL))
-			return (1);
-		i++;
+		cleanup_semaphores(table);
+		return (1);
 	}
 	return (0);
-}
-
-static void	stt_assign_forks(t_philo *philo, t_table *table)
-{
-	int32_t	id;
-
-	id = philo->id - 1;
-	if (philo->id % 2 != 0)
-	{
-		philo->left_fork = &table->forks[id];
-		philo->right_fork = &table->forks[(id + 1) % table->number_philos];
-	}
-	else
-	{
-		philo->left_fork = &table->forks[(id + 1) % table->number_philos];
-		philo->right_fork = &table->forks[id];
-	}
 }
 
 static void	stt_init_philos(t_table *table)
@@ -55,7 +47,6 @@ static void	stt_init_philos(t_table *table)
 		table->philos[i].meals_eaten = 0;
 		table->philos[i].last_meal_time = table->start_time;
 		table->philos[i].table = table;
-		stt_assign_forks(&table->philos[i], table);
 		i++;
 	}
 }
@@ -63,12 +54,8 @@ static void	stt_init_philos(t_table *table)
 // Return value: 0) Success  1) Error
 int	init_table(t_table *table)
 {
-    table->start_time = get_time_ms();
-	if (pthread_mutex_init(&table->death_mutex, NULL))
-		return (1);
-	if (pthread_mutex_init(&table->print_mutex, NULL))
-		return (1);
-	if (stt_init_forks(table))
+	table->start_time = get_time_ms();
+	if (stt_init_semaphores(table))
 		return (1);
 	stt_init_philos(table);
 	return (0);

@@ -35,18 +35,28 @@ static void	stt_eat(t_philo *philo)
 	sem_post(philo->table->forks);
 	sem_post(philo->table->forks);
 	if (philo->table->number_meals != -1
-			&& philo->meals_eaten >= philo->table->number_meals)
-	{
-		sem_post(philo->table->full_sem);
+		&& philo->meals_eaten >= philo->table->number_meals)
 		exit(0);
-	}
+}
+
+static void	*stt_single_philo(t_philo *philo)
+{
+	sem_wait(philo->table->forks);
+	stt_print_state(philo, "has taken a fork");
+	precise_sleep(philo->table->starve_time + 10, philo->table);
+	exit(0);
 }
 
 void	*philo_process(t_philo *philo)
 {
+	sem_wait(philo->table->meal_sem);
+	philo->last_meal_time = get_time_ms();
+	sem_post(philo->table->meal_sem);
 	if (pthread_create(&philo->monitor_thread, NULL, monitor_routine, philo))
 		exit(1);
 	pthread_detach(philo->monitor_thread);
+	if (philo->table->number_philos == 1)
+		stt_single_philo(philo);
 	if (philo->id % 2 == 0)
 		precise_sleep(philo->table->eat_time / 2, philo->table);
 	while (1)

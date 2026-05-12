@@ -1,58 +1,58 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_bonus.c                                       :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: feazeved <feazeved@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 17:55:08 by feazeved          #+#    #+#             */
-/*   Updated: 2026/04/27 19:42:28 by feazeved         ###   ########.fr       */
+/*   Updated: 2026/03/11 18:30:41 by feazeved         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#include <pthread.h>
 #include <string.h>
-#include "philo_bonus.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include "philo.h"
 
-static void	*stt_wait_all_ate(void *arg)
+static void	stt_join_philos(t_table *table, int32_t count)
 {
-	t_table	*table;
-	int		i;
+	int32_t i;
 
-	table = (t_table *)arg;
 	i = 0;
-	while (i < table->number_philos)
+	while (i < count)
 	{
-		waitpid(table->pids[i], NULL, 0);
-		i++;
-	}
-	sem_post(table->death_sem);
-	return (NULL);
+        pthread_join(table->philos[i].thread, NULL);
+        i++;
+    }
 }
 
 static int	stt_start_simulation(t_table *table)
 {
-	int			i;
-	pthread_t	waiter;
+	int32_t		i;
+	pthread_t	monitor;
 
-	i = -1;
-	while (++i < table->number_philos)
+	i = 0;
+	while (i < table->number_philos)
 	{
-		table->pids[i] = fork();
-		if (table->pids[i] < 0)
+		if (pthread_create(&table->philos[i].thread, NULL,
+				philo_routine, &table->philos[i]))
+		{
+			stt_join_philos(table, i);
 			return (1);
-		if (table->pids[i] == 0)
-			philo_process(&table->philos[i]);
+		}
+		i++;
 	}
-	pthread_create(&waiter, NULL, stt_wait_all_ate, table);
-	pthread_detach(waiter);
-	sem_wait(table->death_sem);
-	i = -1;
-	while (++i < table->number_philos)
-		kill(table->pids[i], SIGKILL);
+	if (pthread_create(&monitor, NULL, monitor_routine, table))
+	{
+		stt_join_philos(table, table->number_philos);
+		return (1);
+	}
+	i = 0;
+	stt_join_philos(table, table->number_philos);
+	pthread_join(monitor, NULL);
 	return (0);
 }
 
@@ -65,15 +65,15 @@ int	main(int argc, char **argv)
 		return (EXIT_FAILURE);
 	if (init_table(&table))
 	{
-		write(STDERR_FILENO, "Error: semaphores initialization failed.\n", 43);
+		write(STDERR_FILENO, "Error: mutex initialization failed.\n", 36);
 		return (EXIT_FAILURE);
 	}
 	if (stt_start_simulation(&table))
 	{
-		write(STDERR_FILENO, "Error: fork failed.\n", 22);
-		cleanup_semaphores(&table);
+		write(STDERR_FILENO, "Error: thread creation failed.\n", 31);
+		cleanup(&table, 0);
 		return (EXIT_FAILURE);
 	}
-	cleanup_semaphores(&table);
+	cleanup(&table, 0);
 	return (EXIT_SUCCESS);
 }
