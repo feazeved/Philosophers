@@ -57,8 +57,6 @@ void	*philo_process(t_philo *philo)
 	pthread_detach(philo->monitor_thread);
 	if (philo->table->number_philos == 1)
 		stt_single_philo(philo);
-	if (philo->id % 2 == 0)
-		precise_sleep(philo->table->eat_time / 2, philo->table);
 	while (1)
 	{
 		stt_print_state(philo, "is thinking");

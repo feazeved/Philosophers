@@ -52,6 +52,7 @@ typedef struct s_table
 	sem_t	*print_sem;
 	sem_t	*death_sem;
 	sem_t	*meal_sem;
+  sem_t *room_sem;
 }	t_table;
 
 void	*monitor_routine(void *arg);
