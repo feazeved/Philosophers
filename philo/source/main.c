@@ -50,7 +50,6 @@ static int	stt_start_simulation(t_table *table)
 		stt_join_philos(table, table->number_philos);
 		return (1);
 	}
-	i = 0;
 	stt_join_philos(table, table->number_philos);
 	pthread_join(monitor, NULL);
 	return (0);

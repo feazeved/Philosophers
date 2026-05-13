@@ -33,6 +33,15 @@ static void	*stt_wait_all_ate(void *arg)
 	return (NULL);
 }
 
+static void	stt_kill_all(t_table *table)
+{
+	int	i;
+
+	i = -1;
+	while (++i < table->number_philos)
+		kill(table->pids[i], SIGKILL);
+}
+
 static int	stt_start_simulation(t_table *table)
 {
 	int			i;
@@ -44,19 +53,20 @@ static int	stt_start_simulation(t_table *table)
 		table->pids[i] = fork();
 		if (table->pids[i] < 0)
 		{
-			while (--i >= 0)
-				kill(table->pids[i], SIGKILL);
+			stt_kill_all(table);
 			return (1);
 		}
 		if (table->pids[i] == 0)
 			philo_process(&table->philos[i]);
 	}
-	pthread_create(&waiter, NULL, stt_wait_all_ate, table);
+	if (pthread_create(&waiter, NULL, stt_wait_all_ate, table))
+	{
+		stt_kill_all(table);
+		return (1);
+	}
 	pthread_detach(waiter);
 	sem_wait(table->death_sem);
-	i = -1;
-	while (++i < table->number_philos)
-		kill(table->pids[i], SIGKILL);
+	stt_kill_all(table);
 	return (0);
 }
 
