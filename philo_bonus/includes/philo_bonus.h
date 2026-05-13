@@ -34,6 +34,7 @@ typedef struct s_philo
 	int32_t		meals_eaten;
 	int64_t		last_meal_time;
 	pthread_t	monitor_thread;
+	int			stop_monitor;
 	t_table		*table;
 }	t_philo;
 

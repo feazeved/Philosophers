@@ -24,7 +24,21 @@ static void	stt_print_state(t_philo *philo, const char *state)
 	sem_post(philo->table->print_sem);
 }
 
-static void	stt_eat(t_philo *philo)
+static void	stt_clean_child(t_table *table)
+{
+	if (table->eat_mut != SEM_FAILED)
+		sem_close(table->eat_mut);
+	if (table->forks != SEM_FAILED)
+		sem_close(table->forks);
+	if (table->print_sem != SEM_FAILED)
+		sem_close(table->print_sem);
+	if (table->death_sem != SEM_FAILED)
+		sem_close(table->death_sem);
+	if (table->meal_sem != SEM_FAILED)
+		sem_close(table->meal_sem);
+}
+
+static int	stt_eat(t_philo *philo)
 {
 	sem_wait(philo->table->meal_sem);
 	philo->last_meal_time = get_time_ms();
@@ -36,7 +50,8 @@ static void	stt_eat(t_philo *philo)
 	sem_post(philo->table->forks);
 	if (philo->table->number_meals != -1
 		&& philo->meals_eaten >= philo->table->number_meals)
-		exit(0);
+		return (1);
+	return (0);
 }
 
 static void	*stt_single_philo(t_philo *philo)
@@ -44,6 +59,7 @@ static void	*stt_single_philo(t_philo *philo)
 	sem_wait(philo->table->forks);
 	stt_print_state(philo, "has taken a fork");
 	precise_sleep(philo->table->starve_time + 10, philo->table);
+	stt_clean_child(philo->table);
 	exit(0);
 }
 
@@ -54,7 +70,6 @@ void	*philo_process(t_philo *philo)
 	sem_post(philo->table->meal_sem);
 	if (pthread_create(&philo->monitor_thread, NULL, monitor_routine, philo))
 		exit(1);
-	pthread_detach(philo->monitor_thread);
 	if (philo->table->number_philos == 1)
 		stt_single_philo(philo);
 	while (1)
@@ -66,9 +81,13 @@ void	*philo_process(t_philo *philo)
 		sem_wait(philo->table->forks);
 		stt_print_state(philo, "has taken a fork");
 		sem_post(philo->table->eat_mut);
-		stt_eat(philo);
+		if (stt_eat(philo))
+			break ;
 		stt_print_state(philo, "is sleeping");
 		precise_sleep(philo->table->sleep_time, philo->table);
 	}
+	philo->stop_monitor = 1;
+	pthread_join(philo->monitor_thread, NULL);
+	stt_clean_child(philo->table);
 	exit(0);
 }

@@ -64,9 +64,9 @@ static int	stt_start_simulation(t_table *table)
 		stt_kill_all(table);
 		return (1);
 	}
-	pthread_detach(waiter);
 	sem_wait(table->death_sem);
 	stt_kill_all(table);
+	pthread_join(waiter, NULL);
 	return (0);
 }
 

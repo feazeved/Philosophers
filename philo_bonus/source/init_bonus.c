@@ -51,6 +51,7 @@ static void	stt_init_philos(t_table *table)
 		table->philos[i].meals_eaten = 0;
 		table->philos[i].last_meal_time = table->start_time;
 		table->philos[i].table = table;
+		table->philos[i].stop_monitor = 0;
 		i++;
 	}
 }

@@ -21,7 +21,7 @@ void	*monitor_routine(void *arg)
 	int64_t	elapsed;
 
 	philo = (t_philo *)arg;
-	while (1)
+	while (!philo->stop_monitor)
 	{
 		sem_wait(philo->table->meal_sem);
 		elapsed = get_time_ms() - philo->last_meal_time;
@@ -32,7 +32,7 @@ void	*monitor_routine(void *arg)
 			printf("%lld %d died\n", (long long)
 				(get_time_ms() - philo->table->start_time), philo->id);
 			sem_post(philo->table->death_sem);
-			exit(1);
+			return (NULL);
 		}
 		usleep(1000);
 	}
