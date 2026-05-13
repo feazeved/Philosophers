@@ -19,14 +19,14 @@
 
 static void	stt_join_philos(t_table *table, int32_t count)
 {
-	int32_t i;
+	int32_t	i;
 
 	i = 0;
 	while (i < count)
 	{
-        pthread_join(table->philos[i].thread, NULL);
-        i++;
-    }
+		pthread_join(table->philos[i].thread, NULL);
+		i++;
+	}
 }
 
 static int	stt_start_simulation(t_table *table)

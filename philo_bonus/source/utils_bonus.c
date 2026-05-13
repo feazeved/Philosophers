@@ -37,8 +37,8 @@ void	precise_sleep(int64_t duration_ms, t_table *table)
 
 void	cleanup_semaphores(t_table *table)
 {
-  if (table->room_sem != SEM_FAILED)
-    sem_close(table->room_sem);
+	if (table->eat_mut != SEM_FAILED)
+		sem_close(table->eat_mut);
 	if (table->forks != SEM_FAILED)
 		sem_close(table->forks);
 	if (table->print_sem != SEM_FAILED)
@@ -47,7 +47,7 @@ void	cleanup_semaphores(t_table *table)
 		sem_close(table->death_sem);
 	if (table->meal_sem != SEM_FAILED)
 		sem_close(table->meal_sem);
-  sem_unlink("/philo_room");
+	sem_unlink("/philo_eat");
 	sem_unlink("/philo_forks");
 	sem_unlink("/philo_print");
 	sem_unlink("/philo_death");

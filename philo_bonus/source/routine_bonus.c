@@ -60,13 +60,13 @@ void	*philo_process(t_philo *philo)
 	while (1)
 	{
 		stt_print_state(philo, "is thinking");
-    sem_wait(philo->table->room_sem);
+		sem_wait(philo->table->eat_mut);
 		sem_wait(philo->table->forks);
 		stt_print_state(philo, "has taken a fork");
 		sem_wait(philo->table->forks);
 		stt_print_state(philo, "has taken a fork");
+		sem_post(philo->table->eat_mut);
 		stt_eat(philo);
-    sem_post(philo->table->room_sem);
 		stt_print_state(philo, "is sleeping");
 		precise_sleep(philo->table->sleep_time, philo->table);
 	}

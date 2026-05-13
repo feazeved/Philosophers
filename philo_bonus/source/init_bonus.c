@@ -14,7 +14,7 @@
 
 static int	stt_init_semaphores(t_table *table)
 {
-  table->room_sem = SEM_FAILED;
+	table->eat_mut = SEM_FAILED;
 	table->forks = SEM_FAILED;
 	table->print_sem = SEM_FAILED;
 	table->death_sem = SEM_FAILED;
@@ -23,9 +23,8 @@ static int	stt_init_semaphores(t_table *table)
 	sem_unlink("/philo_print");
 	sem_unlink("/philo_death");
 	sem_unlink("/philo_meal");
-  sem_unlink("/philo_room");
-  table->room_sem = sem_open("/philo_room", O_CREAT,
-      0644, table->number_philos - 1);
+	sem_unlink("/philo_eat");
+	table->eat_mut = sem_open("/philo_eat", O_CREAT, 0644, 1);
 	table->forks = sem_open("/philo_forks", O_CREAT,
 			0644, table->number_philos);
 	table->print_sem = sem_open("/philo_print", O_CREAT, 0644, 1);
@@ -33,7 +32,7 @@ static int	stt_init_semaphores(t_table *table)
 	table->meal_sem = sem_open("/philo_meal", O_CREAT, 0644, 1);
 	if (table->forks == SEM_FAILED || table->print_sem == SEM_FAILED
 		|| table->death_sem == SEM_FAILED || table->meal_sem == SEM_FAILED
-    || table->room_sem == SEM_FAILED)
+		|| table->eat_mut == SEM_FAILED)
 	{
 		cleanup_semaphores(table);
 		return (1);
